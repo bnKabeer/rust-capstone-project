@@ -219,9 +219,16 @@ fn main() -> bitcoincore_rpc::Result<()> {
         }
     }
 
-    // Calculate transaction fee = total inputs - total outputs
-    let total_output = trader_output_amount + miner_change_amount;
-    let tx_fee = miner_input_amount - total_output;
+    // Get the fee directly from gettransaction RPC so it matches exactly what
+    // the test reads from the node (avoids floating-point precision mismatches
+    // from manual input-minus-output calculation).
+    #[derive(Deserialize)]
+    struct GetTransactionResult {
+        fee: f64,
+    }
+    let get_tx =
+        miner_rpc.call::<GetTransactionResult>("gettransaction", &[json!(txid.to_string())])?;
+    let tx_fee = get_tx.fee.abs();
 
     println!("--- Transaction Details ---");
     println!("TXID:                  {}", txid);
