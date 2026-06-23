@@ -61,7 +61,10 @@ fn main() -> bitcoincore_rpc::Result<()> {
                     Ok(_) => println!("Loaded wallet: {}", wallet_name),
                     Err(load_err) => {
                         // Already loaded is fine — ignore that specific error
-                        println!("Wallet '{}' already loaded or error: {:?}", wallet_name, load_err);
+                        println!(
+                            "Wallet '{}' already loaded or error: {:?}",
+                            wallet_name, load_err
+                        );
                     }
                 }
             }
@@ -85,7 +88,8 @@ fn main() -> bitcoincore_rpc::Result<()> {
     // This address will receive all block subsidy rewards.
     // -------------------------------------------------------------------------
     let miner_address = miner_rpc.get_new_address(Some("Mining Reward"), None)?;
-    let miner_address = miner_address.require_network(bitcoincore_rpc::bitcoin::Network::Regtest)
+    let miner_address = miner_address
+        .require_network(bitcoincore_rpc::bitcoin::Network::Regtest)
         .expect("Miner address must be regtest");
     println!("Miner address: {}", miner_address);
 
@@ -109,7 +113,8 @@ fn main() -> bitcoincore_rpc::Result<()> {
     // Create a receiving address in the Trader wallet labeled "Received"
     // -------------------------------------------------------------------------
     let trader_address = trader_rpc.get_new_address(Some("Received"), None)?;
-    let trader_address = trader_address.require_network(bitcoincore_rpc::bitcoin::Network::Regtest)
+    let trader_address = trader_address
+        .require_network(bitcoincore_rpc::bitcoin::Network::Regtest)
         .expect("Trader address must be regtest");
     println!("Trader address: {}", trader_address);
 
@@ -165,7 +170,8 @@ fn main() -> bitcoincore_rpc::Result<()> {
         if (value - 20.0).abs() < 0.01 {
             trader_output_amount = value;
             if let Some(addr) = vout.script_pub_key.address.as_ref() {
-                trader_output_address = addr.clone()
+                trader_output_address = addr
+                    .clone()
                     .require_network(bitcoincore_rpc::bitcoin::Network::Regtest)
                     .map(|a| a.to_string())
                     .unwrap_or_default();
@@ -174,7 +180,8 @@ fn main() -> bitcoincore_rpc::Result<()> {
             // The other output is Miner's change
             miner_change_amount = value;
             if let Some(addr) = vout.script_pub_key.address.as_ref() {
-                miner_change_address = addr.clone()
+                miner_change_address = addr
+                    .clone()
                     .require_network(bitcoincore_rpc::bitcoin::Network::Regtest)
                     .map(|a| a.to_string())
                     .unwrap_or_default();
